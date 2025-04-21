@@ -49,77 +49,62 @@ public class PokemonQueryImpl implements PokemonDataInterface {
     @Override
     public List<Pokemon> exactMatchQuery(String attribute, Object value) {
         List<Pokemon> matching = new ArrayList<>();
+        String lowerAttr = attribute.toLowerCase();
 
+        // This should validate attribute first
+        Set<String> validAttributes = Set.of("name", "id", "type", "hp", "attack", "defense",
+                "spattack", "sp_attack", "spdefense", "sp_defense", "speed", "basestats",
+                "base_stats", "grass_weakness");
+
+        if (!validAttributes.contains(lowerAttr)) {
+            System.out.println("Unsupported attribute: " + attribute);
+            return matching; // return empty list early
+        }
+
+        // NOw its going to proceed with matching loop
         for (Pokemon p : pokemonList) {
-            switch (attribute.toLowerCase()) {
+            switch (lowerAttr) {
                 case "name":
-                    if (p.getName().equalsIgnoreCase((String) value)) {
-                        matching.add(p);
-                    }
+                    if (p.getName().equalsIgnoreCase((String) value)) matching.add(p);
                     break;
                 case "id":
-                    if (p.getId() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getId() == (int) value) matching.add(p);
                     break;
                 case "type":
-                    if (p.getType().equalsIgnoreCase((String) value)) {
-                         matching.add(p);
-                    }
+                    if (p.getType().equalsIgnoreCase((String) value)) matching.add(p);
                     break;
                 case "hp":
-                    if (p.getHp() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getHp() == (int) value) matching.add(p);
                     break;
                 case "attack":
-                    if (p.getAttack() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getAttack() == (int) value) matching.add(p);
                     break;
                 case "defense":
-                    if (p.getDefense() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getDefense() == (int) value) matching.add(p);
                     break;
                 case "spattack":
                 case "sp_attack":
-                    if (p.getSpAttack() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getSpAttack() == (int) value) matching.add(p);
                     break;
                 case "spdefense":
                 case "sp_defense":
-                    if (p.getSpDefense() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getSpDefense() == (int) value) matching.add(p);
                     break;
                 case "speed":
-                    if (p.getSpeed() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getSpeed() == (int) value) matching.add(p);
                     break;
                 case "basestats":
                 case "base_stats":
-                    if (p.getBaseStats() == (int) value) {
-                        matching.add(p);
-                    }
+                    if (p.getBaseStats() == (int) value) matching.add(p);
                     break;
                 case "grass_weakness":
-                    if (p.getGrassWeakness() == (double) value) {
-                        matching.add(p);
-                    }
+                    if (p.getGrassWeakness() == (double) value) matching.add(p);
                     break;
-                default:
-                    // This is to handle invalid attribute easily - Dara
-                    System.out.println("Unsupported attribute: " + attribute);
             }
         }
 
         return matching;
     }
-
-
 
     @Override
     public List<Pokemon> rangeQuery(String attribute, Comparable lowerBound, Comparable upperBound, int limit) {
