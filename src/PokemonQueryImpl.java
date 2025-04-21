@@ -20,7 +20,7 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         while ((line = reader.readLine()) != null) {
             String[] tokens = line.split(",");
 
-            // Basic parsing: Adjust indices based on our CSV column order - Dara
+            // Basic parsing: This is to adjust indices based on our CSV column order - Dara
             int id = Integer.parseInt(tokens[0].trim());
             String name = tokens[1].trim();
             int hp = Integer.parseInt(tokens[2].trim());
