@@ -9,11 +9,12 @@ public class Pokemon {
     private int speed;
     private int baseStats;
     private double grassWeakness;
+    private String type;
 
     // The Constructor for the Pokémon Method itself - Dara
     public Pokemon(int id, String name, int hp, int attack, int defense,
                    int spAttack, int spDefense, int speed, int baseStats,
-                   double grassWeakness) {
+                   double grassWeakness, String type) {
         this.id = id;
         this.name = name;
         this.hp = hp;
@@ -24,6 +25,7 @@ public class Pokemon {
         this.speed = speed;
         this.baseStats = baseStats;
         this.grassWeakness = grassWeakness;
+        this.type = type;
     }
 
     // The Getters - Dara
@@ -37,6 +39,7 @@ public class Pokemon {
     public int getSpeed() { return speed; }
     public int getBaseStats() { return baseStats; }
     public double getGrassWeakness() { return grassWeakness; }
+    public String getType() { return type; }
 
     // I created an Override toString for easy debugging for us - Dara
     @Override

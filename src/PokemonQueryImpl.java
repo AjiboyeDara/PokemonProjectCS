@@ -22,17 +22,7 @@ public class PokemonQueryImpl implements PokemonDataInterface {
 
             // Basic parsing: This is to adjust indices based on our CSV column order - Dara
             int id = Integer.parseInt(tokens[0].trim());
-            String name = tokens[1].trim();
-            int hp = Integer.parseInt(tokens[2].trim());
-            int attack = Integer.parseInt(tokens[3].trim());
-            int defense = Integer.parseInt(tokens[4].trim());
-            int spAttack = Integer.parseInt(tokens[5].trim());
-            int spDefense = Integer.parseInt(tokens[6].trim());
-            int speed = Integer.parseInt(tokens[7].trim());
-            int baseStats = Integer.parseInt(tokens[8].trim());
-            double grassWeakness = Double.parseDouble(tokens[13].trim());
-
-            Pokemon p = new Pokemon(id, name, hp, attack, defense, spAttack, spDefense, speed, baseStats, grassWeakness);
+            Pokemon p = getPokemon(tokens, id);
             pokemonList.add(p);
         }
 
@@ -40,26 +30,95 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         return pokemonList.size();
     }
 
+    private static Pokemon getPokemon(String[] tokens, int id) {
+        String name = tokens[1].trim();
+        int hp = Integer.parseInt(tokens[2].trim());
+        int attack = Integer.parseInt(tokens[3].trim());
+        int defense = Integer.parseInt(tokens[4].trim());
+        int spAttack = Integer.parseInt(tokens[5].trim());
+        int spDefense = Integer.parseInt(tokens[6].trim());
+        int speed = Integer.parseInt(tokens[7].trim());
+        int baseStats = Integer.parseInt(tokens[8].trim());
+        double grassWeakness = Double.parseDouble(tokens[13].trim());
+        String type = tokens[36].trim();
+
+        Pokemon p = new Pokemon(id, name, hp, attack, defense, spAttack, spDefense, speed, baseStats, grassWeakness, type);
+        return p;
+    }
+
     @Override
     public List<Pokemon> exactMatchQuery(String attribute, Object value) {
         List<Pokemon> matching = new ArrayList<>();
+
         for (Pokemon p : pokemonList) {
-            if (attribute.equalsIgnoreCase("name")) {
-                if (p.getName().equalsIgnoreCase((String) value)) {
-                    matching.add(p);
-                }
-            } else if (attribute.equalsIgnoreCase("type")) {
-                // When I implement type, I’ll check like:
-                // if (p.getType().equalsIgnoreCase((String) value)) { matching.add(p); }
-            } else if (attribute.equalsIgnoreCase("id")) {
-                if (p.getId() == (int) value) {
-                    matching.add(p);
-                }
+            switch (attribute.toLowerCase()) {
+                case "name":
+                    if (p.getName().equalsIgnoreCase((String) value)) {
+                        matching.add(p);
+                    }
+                    break;
+                case "id":
+                    if (p.getId() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "type":
+                    if (p.getType().equalsIgnoreCase((String) value)) {
+                         matching.add(p);
+                    }
+                    break;
+                case "hp":
+                    if (p.getHp() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "attack":
+                    if (p.getAttack() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "defense":
+                    if (p.getDefense() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "spattack":
+                case "sp_attack":
+                    if (p.getSpAttack() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "spdefense":
+                case "sp_defense":
+                    if (p.getSpDefense() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "speed":
+                    if (p.getSpeed() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "basestats":
+                case "base_stats":
+                    if (p.getBaseStats() == (int) value) {
+                        matching.add(p);
+                    }
+                    break;
+                case "grass_weakness":
+                    if (p.getGrassWeakness() == (double) value) {
+                        matching.add(p);
+                    }
+                    break;
+                default:
+                    // This is to handle invalid attribute easily - Dara
+                    System.out.println("Unsupported attribute: " + attribute);
             }
-            // I’ll add support for other attributes later like "hp", "speed", etc.
         }
+
         return matching;
     }
+
 
 
     @Override
