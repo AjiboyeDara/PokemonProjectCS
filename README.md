@@ -33,10 +33,9 @@ allowing us to search based on type, stats, weaknesses, and other attributes.
 - Stretch Goal: Support query chaining and sorting, e.g.:
   filter("Type", "Fire").range("Attack", 80, 120).sortBy("Speed");
 
-## Sample Usage
-PokemonDataInterface data = new PokemonDataBackend();
-data.loadDataset("pokemon.csv");
-
-List<Pokemon> fireTypes = data.exactMatchQuery("Type", "Fire");
-List<Pokemon> strongPokemons = data.rangeQuery("Attack", 100, 150);
+## Sample Usage   
+    PokemonDataInterface data = new PokemonDataBackend();
+    data.loadDataset("pokemon.csv");
+    List<Pokemon> fireTypes = data.exactMatchQuery("Type", "Fire");
+    List<Pokemon> strongPokemons = data.rangeQuery("Attack", 100, 150);
 
