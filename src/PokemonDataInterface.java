@@ -13,16 +13,14 @@ public interface PokemonDataInterface {
 
 
     /**
-     * Returns the top N Pokémon that match the specified exact attribute and value.
-     * This can be used, for example, to find Pokémon of a specific type
-     * with the highest attack values.
+     * Returns all Pokémon that exactly match the specified attribute and value.
+     * For example, you can find all Pokémon with a given name or ID.
      *
-     * @param attribute The attribute to filter by (e.g., "type", "name").
-     * @param value The exact value to match (e.g., "Fire").
-     * @param topN The number of top results to return based on Attack.
+     * @param attribute The attribute to filter by (e.g., "name", "id").
+     * @param value The exact value to match (e.g., "Pikachu", 25).
      * @return A list of Pokémon records matching the criteria.
      */
-    List<Pokemon> exactMatchQuery(String attribute, Object value, int topN);
+    List<Pokemon> exactMatchQuery(String attribute, Object value);
 
 
     /**

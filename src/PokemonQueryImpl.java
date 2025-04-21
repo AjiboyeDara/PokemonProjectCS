@@ -41,34 +41,26 @@ public class PokemonQueryImpl implements PokemonDataInterface {
     }
 
     @Override
-    // I want to do the ExactMatchQuery - Dara Ajiboye
-    public List<Pokemon> exactMatchQuery(String attribute, Object value, int topN) {
+    public List<Pokemon> exactMatchQuery(String attribute, Object value) {
         List<Pokemon> matching = new ArrayList<>();
-        // I'm going to loop through the loaded Pokémon and find all that match the given attribute and value - Dara
         for (Pokemon p : pokemonList) {
             if (attribute.equalsIgnoreCase("name")) {
                 if (p.getName().equalsIgnoreCase((String) value)) {
                     matching.add(p);
                 }
             } else if (attribute.equalsIgnoreCase("type")) {
-                // I haven't implemented type in the Pokemon class yet, but when I do, I’ll check if p.getType().equalsIgnoreCase((String) value) - Dara
+                // When I implement type, I’ll check like:
+                // if (p.getType().equalsIgnoreCase((String) value)) { matching.add(p); }
             } else if (attribute.equalsIgnoreCase("id")) {
                 if (p.getId() == (int) value) {
                     matching.add(p);
                 }
             }
-            // I plan to support more attributes like "hp", "attack", "speed" later
-            // I'll need to use reflection or a manual chain of if-else blocks to handle each attribute cleanly
-        }
-        // Now I want to sort the matches by Attack power in descending order
-        // (I assume that’s the metric of strength I'm using for now)
-        matching.sort((a, b) -> Integer.compare(b.getAttack(), a.getAttack()));
-        // If the result list is longer than topN, I will trim it
-        if (matching.size() > topN) {
-            return matching.subList(0, topN);
+            // I’ll add support for other attributes later like "hp", "speed", etc.
         }
         return matching;
     }
+
 
     @Override
     public List<Pokemon> rangeQuery(String attribute, Comparable lowerBound, Comparable upperBound, int limit) {
