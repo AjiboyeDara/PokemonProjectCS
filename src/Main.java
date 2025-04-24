@@ -9,13 +9,15 @@ public class Main {
             // this loads all Pokémon into the project - Dara
             System.out.println("Successfully loaded " + count + " Pokémon!");
 
-            // Run exact match query for type = "Water" - Dara
+            /* Remove Comment if you want to test the Exact Match Query and Play around with it if you want to - Dara
+            // This is to run exact match query for type = "Water"
             List<Pokemon> waterTypes = query.exactMatchQuery("type", "Water");
             System.out.println("Water-type Pokémon found: " + waterTypes.size());
 
             for (Pokemon p : waterTypes) {
                 System.out.println(p.getName() + " - Type: " + p.getType());
             }
+            */
 
         } catch (IOException e) {
             System.out.println("Error loading dataset: " + e.getMessage());
