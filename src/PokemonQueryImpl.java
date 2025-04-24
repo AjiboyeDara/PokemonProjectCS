@@ -54,8 +54,7 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         double grassWeakness = Double.parseDouble(tokens[13].trim());
         String type = tokens[36].trim();
 
-        Pokemon p = new Pokemon(id, name, hp, attack, defense, spAttack, spDefense, speed, baseStats, grassWeakness, type);
-        return p;
+        return new Pokemon(id, name, hp, attack, defense, spAttack, spDefense, speed, baseStats, grassWeakness, type);
     }
 
     private void indexPokemon(Pokemon p) {
