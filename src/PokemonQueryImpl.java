@@ -95,6 +95,11 @@ public class PokemonQueryImpl implements PokemonDataInterface {
             return matching; // return empty list early
         }
 
+        // Normalize String keys to lowercase for string-based attributes - Dara
+        if (value instanceof String && Set.of("name", "type").contains(lowerAttr)) {
+            value = ((String) value).toLowerCase();
+        }
+
         // This now uses the indexed map for O(1) lookup - Dara
         return new ArrayList<>(attributeIndex.get(lowerAttr).getOrDefault(value, new ArrayList<>()));
     }
