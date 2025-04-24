@@ -5,6 +5,7 @@ import java.nio.file.*;
 public class PokemonQueryImpl implements PokemonDataInterface {
 
     private final List<Pokemon> pokemonList = new ArrayList<>();
+    private final Map<String, Map<Object, List<Pokemon>>> attributeIndex = new HashMap<>();
 
     @Override
     public int loadDataset(String filePath) throws IOException {
@@ -17,6 +18,14 @@ public class PokemonQueryImpl implements PokemonDataInterface {
             throw new IOException("File is empty");
         }
 
+        // Initialize supported attribute index maps - Dara
+        Set<String> attributes = Set.of("name", "id", "type", "hp", "attack", "defense",
+                "spattack", "sp_attack", "spdefense", "sp_defense",
+                "speed", "basestats", "base_stats", "grass_weakness");
+        for (String attr : attributes) {
+            attributeIndex.put(attr.toLowerCase(), new HashMap<>());
+        }
+
         while ((line = reader.readLine()) != null) {
             String[] tokens = line.split(",");
 
@@ -24,6 +33,9 @@ public class PokemonQueryImpl implements PokemonDataInterface {
             int id = Integer.parseInt(tokens[0].trim());
             Pokemon p = getPokemon(tokens, id);
             pokemonList.add(p);
+
+            // Index each Pokémon for faster exact match query - Dara
+            indexPokemon(p);
         }
 
         reader.close();
@@ -46,12 +58,34 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         return p;
     }
 
+    private void indexPokemon(Pokemon p) {
+        // This handles multi-key attributes like sp_attack/spattack - Dara
+        addToIndex("name", p.getName().toLowerCase(), p);
+        addToIndex("id", p.getId(), p);
+        addToIndex("type", p.getType().toLowerCase(), p);
+        addToIndex("hp", p.getHp(), p);
+        addToIndex("attack", p.getAttack(), p);
+        addToIndex("defense", p.getDefense(), p);
+        addToIndex("spattack", p.getSpAttack(), p);
+        addToIndex("sp_attack", p.getSpAttack(), p);
+        addToIndex("spdefense", p.getSpDefense(), p);
+        addToIndex("sp_defense", p.getSpDefense(), p);
+        addToIndex("speed", p.getSpeed(), p);
+        addToIndex("basestats", p.getBaseStats(), p);
+        addToIndex("base_stats", p.getBaseStats(), p);
+        addToIndex("grass_weakness", p.getGrassWeakness(), p);
+    }
+
+    private void addToIndex(String attribute, Object key, Pokemon p) {
+        attributeIndex.get(attribute.toLowerCase()).computeIfAbsent(key, k -> new ArrayList<>()).add(p);
+    }
+
     @Override
     public List<Pokemon> exactMatchQuery(String attribute, Object value) {
         List<Pokemon> matching = new ArrayList<>();
         String lowerAttr = attribute.toLowerCase();
 
-        // This should validate attribute first
+        // This should validate attribute first - Dara
         Set<String> validAttributes = Set.of("name", "id", "type", "hp", "attack", "defense",
                 "spattack", "sp_attack", "spdefense", "sp_defense", "speed", "basestats",
                 "base_stats", "grass_weakness");
@@ -61,49 +95,8 @@ public class PokemonQueryImpl implements PokemonDataInterface {
             return matching; // return empty list early
         }
 
-        // NOw its going to proceed with matching loop
-        for (Pokemon p : pokemonList) {
-            switch (lowerAttr) {
-                case "name":
-                    if (p.getName().equalsIgnoreCase((String) value)) matching.add(p);
-                    break;
-                case "id":
-                    if (p.getId() == (int) value) matching.add(p);
-                    break;
-                case "type":
-                    if (p.getType().equalsIgnoreCase((String) value)) matching.add(p);
-                    break;
-                case "hp":
-                    if (p.getHp() == (int) value) matching.add(p);
-                    break;
-                case "attack":
-                    if (p.getAttack() == (int) value) matching.add(p);
-                    break;
-                case "defense":
-                    if (p.getDefense() == (int) value) matching.add(p);
-                    break;
-                case "spattack":
-                case "sp_attack":
-                    if (p.getSpAttack() == (int) value) matching.add(p);
-                    break;
-                case "spdefense":
-                case "sp_defense":
-                    if (p.getSpDefense() == (int) value) matching.add(p);
-                    break;
-                case "speed":
-                    if (p.getSpeed() == (int) value) matching.add(p);
-                    break;
-                case "basestats":
-                case "base_stats":
-                    if (p.getBaseStats() == (int) value) matching.add(p);
-                    break;
-                case "grass_weakness":
-                    if (p.getGrassWeakness() == (double) value) matching.add(p);
-                    break;
-            }
-        }
-
-        return matching;
+        // This now uses the indexed map for O(1) lookup - Dara
+        return new ArrayList<>(attributeIndex.get(lowerAttr).getOrDefault(value, new ArrayList<>()));
     }
 
     @Override
