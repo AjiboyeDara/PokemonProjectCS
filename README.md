@@ -28,7 +28,7 @@ We are building a queryable interface over a large Pokémon dataset. The goal is
 ## Goals (In Progress)  
 - [x] Create a `Pokemon` class  
 - [x] Implement `PokemonQueryImpl` with HashMap indexing  
-- [ ] Implement full `rangeQuery` functionality using TreeMap or similar  
+- [x] Implement full `rangeQuery` functionality using TreeMap or similar  
 - [ ] Add unit tests to cover edge cases and verify correctness  
 - [ ] Write analysis documentation (time/space complexity, design choices)
 
