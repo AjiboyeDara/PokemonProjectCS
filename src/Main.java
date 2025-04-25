@@ -19,6 +19,15 @@ public class Main {
             }
             */
 
+            /* range query - delete comment if you want to test:
+            List<Pokemon> hp = query.rangeQuery("hp", 100, 200, 1000);
+            System.out.println("Pokemon with hp between 100 and 200: " + hp.size());
+
+            for (Pokemon p : hp) {
+                System.out.println(p.getName() + " - Type: " + p.getType() + " - hp: " + p.getHp());
+            }
+               */
+
         } catch (IOException e) {
             System.out.println("Error loading dataset: " + e.getMessage());
         }
