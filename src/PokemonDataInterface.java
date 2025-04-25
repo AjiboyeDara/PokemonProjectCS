@@ -33,7 +33,7 @@ public interface PokemonDataInterface {
      * @param limit The maximum number of results to return.
      * @return A list of Pokémon records within the specified range.
      */
-    List<Pokemon> rangeQuery(String attribute, Comparable lowerBound, Comparable upperBound, int limit);
+    List<Pokemon> rangeQuery(String attribute, int lowerBound, int upperBound, int limit);
 
 
     /**
