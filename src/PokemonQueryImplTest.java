@@ -41,7 +41,35 @@ class PokemonQueryImplTest {
 
     @Test
     void rangeQuery() {
+        // normal range query on HP
+        List<Pokemon> hpResults = query.rangeQuery("hp", 70, 100, 5);
+        assertNotNull(hpResults, "Result should not be null");
+        assertTrue(hpResults.size() <= 5, "Should return at most 5 Pokémon");
+        assertTrue(hpResults.stream().allMatch(p -> p.getHp() >= 70 && p.getHp() <= 100),
+                "All Pokémon should have HP between 70 and 100");
+
+        // range query on Attack with no matches
+        List<Pokemon> attackResults = query.rangeQuery("attack", 500, 600, 5);
+        assertNotNull(attackResults, "Result should not be null even if no matches");
+        assertTrue(attackResults.isEmpty(), "No Pokémon should have attack between 500 and 600");
+
+        // limit smaller than possible results
+        List<Pokemon> speedResults = query.rangeQuery("speed", 80, 150, 2);
+        assertNotNull(speedResults, "Result should not be null");
+        assertTrue(speedResults.size() <= 2, "Should return at most 2 Pokémon");
+
+        // check sorting order (speed descending)
+        if (speedResults.size() > 1) {
+            assertTrue(speedResults.get(0).getSpeed() >= speedResults.get(1).getSpeed(),
+                    "Pokémon should be ordered from highest to lowest speed");
+        }
+
+        // unsupported attribute (should return empty)
+        List<Pokemon> invalidAttribute = query.rangeQuery("banana", 0, 100, 5);
+        assertNotNull(invalidAttribute, "Result should not be null even with invalid attribute");
+        assertTrue(invalidAttribute.isEmpty(), "Unsupported attributes should return an empty list");
     }
+
 
     @Test
     void averageQuery() {

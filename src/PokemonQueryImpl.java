@@ -103,10 +103,74 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         return new ArrayList<>(attributeIndex.get(lowerAttr).getOrDefault(value, new ArrayList<>()));
     }
 
+    // returns, in order from highest to lowest, a list of Pokemon that have attributes that fall in
+    // the given (numerical) range, with a limit of limit pokemon in the list.
+    // only queries (non-binary) numerical attributes
     @Override
-    public List<Pokemon> rangeQuery(String attribute, Comparable lowerBound, Comparable upperBound, int limit) {
-        return List.of();
+    public List<Pokemon> rangeQuery(String attribute, int lowerBound, int upperBound, int limit) {
+        List<Pokemon> matching = new ArrayList<>();
+        String lowerAttr = attribute.toLowerCase();
+
+        //valid attributes to query
+        Set<String> validAttributes = Set.of("id", "hp", "attack", "defense", "spattack", "sp_attack", "spdefense",
+                "sp_defense", "speed", "basestats", "base_stats");
+
+        //checks if (param) attribute is valid
+        if (!validAttributes.contains(lowerAttr)) {
+            System.out.println("Unsupported attribute: " + attribute);
+            return matching;
+        }
+
+        //create comparator for pokemon
+        Comparator<Pokemon> comparator = (p1, p2) -> {
+            int val1 = getAttributeValue(p1, lowerAttr);
+            int val2 = getAttributeValue(p2, lowerAttr);
+            if (val2 == val1) {
+                return Integer.compare(p1.getId(), p2.getId());
+            }
+            return Integer.compare(val2, val1); // Sort from highest to lowest
+        };
+        TreeMap<Pokemon, Integer> map = new TreeMap<>(comparator);
+        for (Pokemon p : pokemonList) {
+            int val = getAttributeValue(p, lowerAttr);
+            if (val >= lowerBound && val <= upperBound) {
+                map.put(p, val);
+            }
+        }
+        for (Pokemon p : map.keySet()) {
+            if (matching.size() >= limit) break;
+            matching.add(p);
+        }
+        return matching;
     }
+
+    //helper function to get attribute values within function
+    private int getAttributeValue(Pokemon p, String attr) {
+        switch (attr) {
+            case "id":
+                return p.getId();
+            case "hp":
+                return p.getHp();
+            case "attack":
+                return p.getAttack();
+            case "defense":
+                return p.getDefense();
+            case "spattack":
+            case "sp_attack":
+                return p.getSpAttack();
+            case "spdefense":
+            case "sp_defense":
+                return p.getSpDefense();
+            case "speed":
+                return p.getSpeed();
+            case "basestats":
+            case "base_stats":
+                return p.getBaseStats();
+            default:
+                throw new IllegalArgumentException("Unsupported attribute: " + attr);
+        }
+    }
+
 
     @Override
     public double averageQuery(String attributeToAverage, String filterAttribute, double threshold) {
