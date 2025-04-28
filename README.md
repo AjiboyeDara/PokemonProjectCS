@@ -17,7 +17,8 @@ We are building a queryable interface over a large Pokémon dataset. The goal is
 - Designed and implemented `PokemonDataInterface` with methods for:
   - `int loadDataset(String filePath)`  
   - `List<Pokemon> exactMatchQuery(String attribute, Object value)`  
-  - `List<Pokemon> rangeQuery(String attribute, Comparable lowerBound, Comparable upperBound)`  
+  - `List<Pokemon> rangeQuery(String attribute, Comparable lowerBound, Comparable upperBound)` 
+  - `double averageQuery(String attributeToAverage, String filterAttribute, double threshold)`
 - Fully implemented `PokemonQueryImpl` with:
   - HashMap-based indexing for exactMatchQuery, optimizing lookups to O(1)
   - Indexing logic for supported attributes (e.g., name, type, stats)
@@ -45,3 +46,4 @@ data.loadDataset("pokemon.csv");
 
 List<Pokemon> fireTypes = data.exactMatchQuery("type", "Fire");
 List<Pokemon> speedy = data.rangeQuery("Speed", 100, 150);
+double avgDef = data.averageQuery(\"defense\", \"grass_weakness\", 1.0);
