@@ -70,9 +70,28 @@ class PokemonQueryImplTest {
         assertTrue(invalidAttribute.isEmpty(), "Unsupported attributes should return an empty list");
     }
 
-
     @Test
     void averageQuery() {
+        // --- normal case: average Speed for Pokémon with ID < 5 ---
+        double avgSpeed = query.averageQuery("speed", "id", 5.0);
+        assertEquals(62.5,        // expected value from Pokémon #1–4
+                avgSpeed,
+                0.001,
+                "Average speed should be 62.5 for Pokémon with ID < 5");
+
+        // --- no-match case: returns 0.0 when nothing meets the filter ---
+        double avgAttack = query.averageQuery("attack", "id", 1.0);
+        assertEquals(0.0,
+                avgAttack,
+                0.001,
+                "Average should be 0.0 when no Pokémon match the criteria");
+
+        // --- invalid attribute: implementation returns 0.0 (no exception) ---
+        double invalidAvg = query.averageQuery("name", "hp", 50.0);
+        assertEquals(0.0,
+                invalidAvg,
+                0.001,
+                "Unsupported attribute should return 0.0, not throw");
     }
 
     @Test

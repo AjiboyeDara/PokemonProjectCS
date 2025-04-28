@@ -29,7 +29,7 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         while ((line = reader.readLine()) != null) {
             String[] tokens = line.split(",");
 
-            // Basic parsing: This is to adjust indices based on our CSV column order - Dara
+            // Basic parsing: adjust indices based on our CSV column order - Dara
             int id = Integer.parseInt(tokens[0].trim());
             Pokemon p = getPokemon(tokens, id);
             pokemonList.add(p);
@@ -84,14 +84,14 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         List<Pokemon> matching = new ArrayList<>();
         String lowerAttr = attribute.toLowerCase();
 
-        // This should validate attribute first - Dara
+        // Validate attribute first - Dara
         Set<String> validAttributes = Set.of("name", "id", "type", "hp", "attack", "defense",
                 "spattack", "sp_attack", "spdefense", "sp_defense", "speed", "basestats",
                 "base_stats", "grass_weakness");
 
         if (!validAttributes.contains(lowerAttr)) {
             System.out.println("Unsupported attribute: " + attribute);
-            return matching; // return empty list early
+            return matching;
         }
 
         // Normalize String keys to lowercase for string-based attributes - Dara
@@ -99,13 +99,10 @@ public class PokemonQueryImpl implements PokemonDataInterface {
             value = ((String) value).toLowerCase();
         }
 
-        // This now uses the indexed map for O(1) lookup - Dara
+        // Use the indexed map for O(1) lookup - Dara
         return new ArrayList<>(attributeIndex.get(lowerAttr).getOrDefault(value, new ArrayList<>()));
     }
 
-    // returns, in order from highest to lowest, a list of Pokemon that have attributes that fall in
-    // the given (numerical) range, with a limit of limit pokemon in the list.
-    // only queries (non-binary) numerical attributes
     @Override
     public List<Pokemon> rangeQuery(String attribute, int lowerBound, int upperBound, int limit) {
         List<Pokemon> matching = new ArrayList<>();
@@ -134,7 +131,7 @@ public class PokemonQueryImpl implements PokemonDataInterface {
             if (val >= lowerBound && val <= upperBound) {
                 heap.offer(p);
                 if (heap.size() > limit) {
-                    heap.poll(); // remove smallest
+                    heap.poll();
                 }
             }
         }
@@ -143,9 +140,7 @@ public class PokemonQueryImpl implements PokemonDataInterface {
             matching.add(heap.poll());
         }
 
-        // Matching is in ascending order, reverse to get descending
-        Collections.reverse(matching);
-
+        Collections.reverse(matching); // now from highest to lowest
         return matching;
     }
 
@@ -163,11 +158,61 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         };
     }
 
-
-
     @Override
     public double averageQuery(String attributeToAverage, String filterAttribute, double threshold) {
-        return 0;
+        String lowerAttrAvg = attributeToAverage.toLowerCase();
+        String lowerAttrFilter = filterAttribute.toLowerCase();
+
+        // Validate attributes
+        Set<String> validAttributes = Set.of(
+                "id", "hp", "attack", "defense", "spattack", "sp_attack",
+                "spdefense", "sp_defense", "speed", "basestats", "base_stats",
+                "grass_weakness"
+        );
+
+        if (!validAttributes.contains(lowerAttrAvg)) {
+            System.out.println("Unsupported attribute: " + attributeToAverage);
+            return 0.0;
+        }
+        if (!validAttributes.contains(lowerAttrFilter)) {
+            System.out.println("Unsupported attribute: " + filterAttribute);
+            return 0.0;
+        }
+
+        // Compute average of attributeToAverage for Pokémon where filterAttribute < threshold
+        double sum = 0.0;
+        int count = 0;
+        for (Pokemon p : pokemonList) {
+            double filterVal = getNumericAttributeValue(p, lowerAttrFilter);
+            if (filterVal < threshold) {
+                double value = getNumericAttributeValue(p, lowerAttrAvg);
+                sum += value;
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            return 0.0;
+        }
+        return sum / count;
+    }
+
+    private double getNumericAttributeValue(Pokemon p, String attr) {
+        switch (attr) {
+            case "id": return p.getId();
+            case "hp": return p.getHp();
+            case "attack": return p.getAttack();
+            case "defense": return p.getDefense();
+            case "spattack":
+            case "sp_attack": return p.getSpAttack();
+            case "spdefense":
+            case "sp_defense": return p.getSpDefense();
+            case "speed": return p.getSpeed();
+            case "basestats":
+            case "base_stats": return p.getBaseStats();
+            case "grass_weakness": return p.getGrassWeakness();
+            default: throw new IllegalArgumentException("Unsupported attribute: " + attr);
+        }
     }
 
     // Optional getter for testing/debugging - Dara
