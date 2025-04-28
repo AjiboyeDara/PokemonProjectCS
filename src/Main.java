@@ -26,7 +26,13 @@ public class Main {
             for (Pokemon p : hp) {
                 System.out.println(p.getName() + " - Type: " + p.getType() + " - hp: " + p.getHp());
             }
-               */
+            */
+
+            /* average query - delete comment if you want to test:
+            // This is to run average query for attack with HP filter
+            double avgAttack = query.averageQuery("attack", "hp", 100.0);
+            System.out.println("Average attack for Pokémon with HP >= 100: " + avgAttack);
+            */
 
         } catch (IOException e) {
             System.out.println("Error loading dataset: " + e.getMessage());

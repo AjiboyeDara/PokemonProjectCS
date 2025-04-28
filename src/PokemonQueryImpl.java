@@ -171,10 +171,73 @@ public class PokemonQueryImpl implements PokemonDataInterface {
         }
     }
 
-
     @Override
     public double averageQuery(String attributeToAverage, String filterAttribute, double threshold) {
-        return 0;
+        String lowerAttrAvg = attributeToAverage.toLowerCase();
+        String lowerAttrFilter = filterAttribute.toLowerCase();
+
+        // valid numeric attributes for querying (including synonyms for special names)
+        Set<String> validAttributes = Set.of(
+                "id", "hp", "attack", "defense", "spattack", "sp_attack",
+                "spdefense", "sp_defense", "speed", "basestats", "base_stats",
+                "grass_weakness"
+        );
+
+        // validate that both attributes are supported numeric fields
+        if (!validAttributes.contains(lowerAttrAvg)) {
+            System.out.println("Unsupported attribute: " + attributeToAverage);
+            return 0.0;
+        }
+        if (!validAttributes.contains(lowerAttrFilter)) {
+            System.out.println("Unsupported attribute: " + filterAttribute);
+            return 0.0;
+        }
+
+        // compute the average of the specified attribute for records meeting the filter condition
+        double sum = 0.0;
+        int count = 0;
+        for (Pokemon p : pokemonList) {
+            double filterVal = getNumericAttributeValue(p, lowerAttrFilter);
+            if (filterVal < threshold) {  // include only Pokémon with filterAttribute value below threshold (exclusive)
+                double value = getNumericAttributeValue(p, lowerAttrAvg);
+                sum += value;
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            return 0.0;  // no Pokémon met the filter condition
+        }
+        return sum / count;
+    }
+
+    // helper function to get numeric attribute values (int or double)
+    private double getNumericAttributeValue(Pokemon p, String attr) {
+        switch (attr) {
+            case "id":
+                return p.getId();
+            case "hp":
+                return p.getHp();
+            case "attack":
+                return p.getAttack();
+            case "defense":
+                return p.getDefense();
+            case "spattack":
+            case "sp_attack":
+                return p.getSpAttack();
+            case "spdefense":
+            case "sp_defense":
+                return p.getSpDefense();
+            case "speed":
+                return p.getSpeed();
+            case "basestats":
+            case "base_stats":
+                return p.getBaseStats();
+            case "grass_weakness":
+                return p.getGrassWeakness();
+            default:
+                throw new IllegalArgumentException("Unsupported attribute: " + attr);
+        }
     }
 
     // Optional getter for testing/debugging - Dara
